@@ -23,13 +23,13 @@ opkg install kmod-usb-net-cdc-ncm || echo "WARNING: kmod-usb-net-cdc-ncm failed"
 opkg install usbutils || echo "WARNING: usbutils failed"
 
 echo "[4/5] Configuring network interface..."
-uci set network.wwan=interface || echo "WARNING: Failed to create wwan interface"
-uci set network.wwan.proto='dhcp' || echo "WARNING: Failed to set proto"
-uci set network.wwan.device='usb0' || echo "WARNING: Failed to set device"
+uci set network.wwan11=interface || echo "WARNING: Failed to create wwan11 interface"
+uci set network.wwan11.proto='dhcp' || echo "WARNING: Failed to set proto"
+uci set network.wwan11.device='usb0' || echo "WARNING: Failed to set device"
 uci commit network || echo "WARNING: Failed to commit network"
 
 echo "[5/5] Configuring firewall..."
-uci add_list firewall.@zone[1].network='wwan' || echo "WARNING: Failed to add wwan to firewall"
+uci add_list firewall.@zone[1].network='wwan11' || echo "WARNING: Failed to add wwan11 to firewall"
 uci commit firewall || echo "WARNING: Failed to commit firewall"
 
 echo "Restarting services..."
