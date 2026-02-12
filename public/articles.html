@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="تصفح جميع المقالات - نظام إدارة محتوى عربي">
+  <title>المقالات - نظام إدارة المحتوى العربي</title>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700&display=swap" rel="stylesheet">
+  
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <!-- الترويسة -->
+  <header class="header">
+    <div class="container">
+      <div class="header-content">
+        <a href="/" class="logo">📝 نظام إدارة المحتوى</a>
+        <nav class="nav">
+          <a href="/" class="nav-link">الرئيسية</a>
+          <a href="/articles.html" class="nav-link active">المقالات</a>
+          <a href="/login.html" class="nav-link">تسجيل الدخول</a>
+          <button id="themeToggle" class="theme-toggle">🌙</button>
+        </nav>
+      </div>
+    </div>
+  </header>
+
+  <!-- عنوان الصفحة -->
+  <section class="hero" style="padding: 3rem 0;">
+    <div class="container">
+      <h1 class="hero-title">جميع المقالات</h1>
+      <p class="hero-subtitle">تصفح مقالاتنا واستفد من المحتوى المفيد</p>
+    </div>
+  </section>
+
+  <!-- قسم المقالات -->
+  <section class="section">
+    <div class="container">
+      <!-- البحث والتصفية -->
+      <div class="search-box">
+        <input 
+          type="text" 
+          id="searchInput" 
+          class="search-input" 
+          placeholder="🔍 ابحث في المقالات..."
+        >
+      </div>
+
+      <!-- التصنيفات -->
+      <div id="categoriesFilter" class="flex flex-center mb-3" style="flex-wrap: wrap;">
+        <button class="btn btn-sm btn-secondary active" data-category="">الكل</button>
+      </div>
+
+      <!-- شبكة المقالات -->
+      <div id="articlesGrid" class="grid grid-3">
+        <div class="text-center" style="grid-column: 1/-1;">
+          <div class="spinner" style="width: 50px; height: 50px; border: 4px solid var(--border); border-top-color: var(--primary); border-radius: 50%; margin: 2rem auto;"></div>
+          <p>جاري تحميل المقالات...</p>
+        </div>
+      </div>
+
+      <!-- الترقيم -->
+      <div id="paginationContainer"></div>
+    </div>
+  </section>
+
+  <!-- التذييل -->
+  <footer class="footer">
+    <div class="container">
+      <p>&copy; 2024 نظام إدارة المحتوى العربي - جميع الحقوق محفوظة</p>
+    </div>
+  </footer>
+
+  <script src="/js/main.js"></script>
+  <script>
+    let currentPage = 1;
+    let currentSearch = '';
+    let currentCategory = '';
+
+    // تحميل المقالات
+    async function loadArticles(page = 1, search = '', category = '') {
+      try {
+        currentPage = page;
+        currentSearch = search;
+        currentCategory = category;
+
+        let url = `/articles?page=${page}&limit=9`;
+        if (search) url += `&search=${encodeURIComponent(search)}`;
+        if (category) url += `&category=${encodeURIComponent(category)}`;
+
+        const data = await api.get(url);
+        const grid = document.getElementById('articlesGrid');
+        const paginationContainer = document.getElementById('paginationContainer');
+        
+        grid.innerHTML = '';
+        paginationContainer.innerHTML = '';
+
+        if (data.articles.length === 0) {
+          grid.innerHTML = '<p class="text-center" style="grid-column: 1/-1;">لا توجد مقالات</p>';
+          return;
+        }
+
+        data.articles.forEach(article => {
+          grid.appendChild(createArticleCard(article));
+        });
+
+        // إضافة الترقيم
+        if (data.pagination.totalPages > 1) {
+          paginationContainer.appendChild(
+            createPagination(data.pagination, (newPage) => loadArticles(newPage, search, category))
+          );
+        }
+      } catch (error) {
+        console.error('خطأ في تحميل المقالات:', error);
+        document.getElementById('articlesGrid').innerHTML = 
+          '<p class="text-center alert alert-error" style="grid-column: 1/-1;">حدث خطأ في تحميل المقالات</p>';
+      }
+    }
+
+    // تحميل التصنيفات
+    async function loadCategories() {
+      try {
+        const categories = await api.get('/categories');
+        const container = document.getElementById('categoriesFilter');
+        
+        categories.forEach(cat => {
+          const btn = document.createElement('button');
+          btn.className = 'btn btn-sm btn-secondary';
+          btn.textContent = cat.name;
+          btn.dataset.category = cat.name;
+          btn.onclick = () => filterByCategory(cat.name);
+          container.appendChild(btn);
+        });
+      } catch (error) {
+        console.error('خطأ في تحميل التصنيفات:', error);
+      }
+    }
+
+    // تصفية حسب التصنيف
+    function filterByCategory(category) {
+      currentCategory = category;
+      loadArticles(1, currentSearch, category);
+      
+      // تحديث أزرار التصنيفات
+      document.querySelectorAll('#categoriesFilter button').forEach(btn => {
+        btn.classList.remove('active');
+        if (btn.dataset.category === category) {
+          btn.classList.add('active');
+        }
+      });
+    }
+
+    // البحث
+    const searchInput = document.getElementById('searchInput');
+    searchInput.addEventListener('input', debounce((e) => {
+      loadArticles(1, e.target.value, currentCategory);
+    }, 500));
+
+    // التهيئة
+    document.addEventListener('DOMContentLoaded', () => {
+      loadArticles();
+      loadCategories();
+    });
+  </script>
+</body>
+</html>

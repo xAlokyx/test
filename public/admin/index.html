@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>لوحة التحكم - نظام إدارة المحتوى العربي</title>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700&display=swap" rel="stylesheet">
+  
+  <link rel="stylesheet" href="/css/style.css">
+  <style>
+    .dashboard-header {
+      background: var(--bg-primary);
+      box-shadow: var(--shadow-md);
+      padding: var(--spacing-md) 0;
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: var(--spacing-lg);
+      margin-bottom: var(--spacing-xl);
+    }
+
+    .stat-card {
+      background: var(--bg-primary);
+      padding: var(--spacing-lg);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-md);
+      text-align: center;
+    }
+
+    .stat-icon {
+      font-size: 2.5rem;
+      margin-bottom: var(--spacing-sm);
+    }
+
+    .stat-value {
+      font-size: 2rem;
+      font-weight: bold;
+      color: var(--primary);
+      margin-bottom: var(--spacing-xs);
+    }
+
+    .stat-label {
+      color: var(--text-secondary);
+      font-size: 0.875rem;
+    }
+
+    .actions-bar {
+      display: flex;
+      gap: var(--spacing-md);
+      margin-bottom: var(--spacing-lg);
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .table-container {
+      background: var(--bg-primary);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-md);
+      overflow: hidden;
+    }
+
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.5);
+      z-index: 2000;
+      align-items: center;
+      justify-content: center;
+      padding: var(--spacing-lg);
+    }
+
+    .modal.active {
+      display: flex;
+    }
+
+    .modal-content {
+      background: var(--bg-primary);
+      border-radius: var(--radius-lg);
+      padding: var(--spacing-xl);
+      max-width: 800px;
+      width: 100%;
+      max-height: 90vh;
+      overflow-y: auto;
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: var(--spacing-lg);
+      padding-bottom: var(--spacing-md);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .modal-title {
+      font-size: 1.5rem;
+      font-weight: bold;
+    }
+
+    .close-btn {
+      background: none;
+      border: none;
+      font-size: 1.5rem;
+      cursor: pointer;
+      color: var(--text-secondary);
+      padding: 0;
+      width: 32px;
+      height: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .close-btn:hover {
+      color: var(--error);
+    }
+
+    .editor-toolbar {
+      display: flex;
+      gap: var(--spacing-xs);
+      flex-wrap: wrap;
+      padding: var(--spacing-sm);
+      background: var(--bg-secondary);
+      border: 1px solid var(--border);
+      border-bottom: none;
+      border-radius: var(--radius-md) var(--radius-md) 0 0;
+    }
+
+    .editor-btn {
+      background: var(--bg-primary);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: var(--spacing-xs) var(--spacing-sm);
+      cursor: pointer;
+      font-size: 0.875rem;
+      transition: var(--transition);
+    }
+
+    .editor-btn:hover {
+      background: var(--border);
+    }
+
+    #contentEditor {
+      border-radius: 0 0 var(--radius-md) var(--radius-md);
+      border-top: none;
+      min-height: 300px;
+    }
+  </style>
+</head>
+<body>
+  <!-- ترويسة لوحة التحكم -->
+  <header class="dashboard-header">
+    <div class="container">
+      <div class="flex-between">
+        <div class="flex" style="align-items: center;">
+          <h1 style="font-size: 1.5rem; font-weight: bold; color: var(--primary);">
+            ⚙️ لوحة التحكم
+          </h1>
+          <span id="welcomeMessage" style="color: var(--text-secondary);"></span>
+        </div>
+        <div class="flex" style="align-items: center; gap: var(--spacing-md);">
+          <a href="/" class="btn btn-sm btn-secondary">عرض الموقع</a>
+          <button id="themeToggle" class="theme-toggle">🌙</button>
+          <button id="logoutBtn" class="btn btn-sm btn-danger">تسجيل الخروج</button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- محتوى لوحة التحكم -->
+  <section class="section">
+    <div class="container">
+      <!-- الإحصائيات -->
+      <div class="stats-grid" id="statsContainer">
+        <div class="stat-card">
+          <div class="stat-icon">📝</div>
+          <div class="stat-value" id="totalArticles">-</div>
+          <div class="stat-label">إجمالي المقالات</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon">✅</div>
+          <div class="stat-value" id="publishedArticles">-</div>
+          <div class="stat-label">المقالات المنشورة</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon">📋</div>
+          <div class="stat-value" id="draftArticles">-</div>
+          <div class="stat-label">المسودات</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon">👁️</div>
+          <div class="stat-value" id="totalViews">-</div>
+          <div class="stat-label">إجمالي المشاهدات</div>
+        </div>
+      </div>
+
+      <!-- شريط الإجراءات -->
+      <div class="actions-bar">
+        <h2 style="font-size: 1.5rem; font-weight: 600;">إدارة المقالات</h2>
+        <button id="addArticleBtn" class="btn btn-primary">+ إضافة مقال جديد</button>
+      </div>
+
+      <!-- جدول المقالات -->
+      <div class="table-container">
+        <table class="table" id="articlesTable">
+          <thead>
+            <tr>
+              <th>العنوان</th>
+              <th>التصنيف</th>
+              <th>الحالة</th>
+              <th>المشاهدات</th>
+              <th>التاريخ</th>
+              <th>الإجراءات</th>
+            </tr>
+          </thead>
+          <tbody id="articlesTableBody">
+            <tr>
+              <td colspan="6" style="text-align: center; padding: var(--spacing-xl);">
+                <div class="spinner" style="width: 40px; height: 40px; border: 4px solid var(--border); border-top-color: var(--primary); border-radius: 50%; margin: 0 auto;"></div>
+                <p style="margin-top: var(--spacing-md);">جاري تحميل المقالات...</p>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      
+      <div id="paginationContainer"></div>
+    </div>
+  </section>
+
+  <!-- نافذة منبثقة لإضافة/تعديل المقال -->
+  <div id="articleModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 class="modal-title" id="modalTitle">إضافة مقال جديد</h2>
+        <button class="close-btn" onclick="closeModal()">×</button>
+      </div>
+      
+      <form id="articleForm">
+        <input type="hidden" id="articleId">
+        
+        <div class="form-group">
+          <label class="form-label">عنوان المقال *</label>
+          <input type="text" id="title" class="form-input" required placeholder="أدخل عنوان المقال">
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">الرابط (Slug) *</label>
+          <input type="text" id="slug" class="form-input" required placeholder="article-slug">
+          <small style="color: var(--text-secondary);">سيتم إنشاءه تلقائياً من العنوان</small>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">الملخص</label>
+          <textarea id="excerpt" class="form-textarea" rows="3" placeholder="ملخص قصير عن المقال"></textarea>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">المحتوى *</label>
+          <div class="editor-toolbar">
+            <button type="button" class="editor-btn" onclick="formatText('bold')"><b>B</b></button>
+            <button type="button" class="editor-btn" onclick="formatText('italic')"><i>I</i></button>
+            <button type="button" class="editor-btn" onclick="formatText('heading')">H2</button>
+            <button type="button" class="editor-btn" onclick="formatText('paragraph')">P</button>
+            <button type="button" class="editor-btn" onclick="formatText('list')">•</button>
+          </div>
+          <textarea id="contentEditor" class="form-textarea" required placeholder="محتوى المقال بصيغة HTML"></textarea>
+        </div>
+
+        <div class="grid grid-2">
+          <div class="form-group">
+            <label class="form-label">التصنيف</label>
+            <select id="category" class="form-select">
+              <option value="">اختر التصنيف</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">الوسوم (Tags)</label>
+            <input type="text" id="tags" class="form-input" placeholder="وسم1, وسم2, وسم3">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">رابط الصورة</label>
+          <input type="text" id="image" class="form-input" placeholder="https://example.com/image.jpg">
+          <div style="margin-top: var(--spacing-sm);">
+            <input type="file" id="imageFile" accept="image/*" style="display: none;">
+            <button type="button" class="btn btn-sm btn-secondary" onclick="document.getElementById('imageFile').click()">
+              📁 رفع صورة
+            </button>
+            <span id="uploadStatus" style="margin-right: var(--spacing-sm); color: var(--text-secondary);"></span>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">الحالة</label>
+          <select id="status" class="form-select">
+            <option value="draft">مسودة</option>
+            <option value="published">منشور</option>
+          </select>
+        </div>
+
+        <div class="flex" style="gap: var(--spacing-md); justify-content: flex-end; margin-top: var(--spacing-xl);">
+          <button type="button" class="btn btn-secondary" onclick="closeModal()">إلغاء</button>
+          <button type="submit" class="btn btn-success" id="saveBtn">💾 حفظ المقال</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script src="/js/main.js"></script>
+  <script src="/admin/dashboard.js"></script>
+</body>
+</html>

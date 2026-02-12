@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="نظام إدارة محتوى عربي احترافي - مدونة تقنية">
+  <meta name="keywords" content="مدونة, تقنية, برمجة, عربي">
+  <meta name="author" content="Arabic CMS">
+  
+  <!-- SEO Meta Tags -->
+  <meta property="og:title" content="نظام إدارة المحتوى العربي">
+  <meta property="og:description" content="مدونة تقنية عربية احترافية">
+  <meta property="og:type" content="website">
+  
+  <title>نظام إدارة المحتوى العربي - الصفحة الرئيسية</title>
+  
+  <!-- Google Fonts - Cairo -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700&display=swap" rel="stylesheet">
+  
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <!-- الترويسة - Header -->
+  <header class="header">
+    <div class="container">
+      <div class="header-content">
+        <a href="/" class="logo">
+          📝 نظام إدارة المحتوى
+        </a>
+        <nav class="nav">
+          <a href="/" class="nav-link active">الرئيسية</a>
+          <a href="/articles.html" class="nav-link">المقالات</a>
+          <a href="/login.html" class="nav-link">تسجيل الدخول</a>
+          <button id="themeToggle" class="theme-toggle">🌙</button>
+        </nav>
+      </div>
+    </div>
+  </header>
+
+  <!-- البطل - Hero Section -->
+  <section class="hero">
+    <div class="container">
+      <h1 class="hero-title">مرحباً بك في نظام إدارة المحتوى العربي</h1>
+      <p class="hero-subtitle">نظام احترافي لإدارة المحتوى والمقالات بواجهة عربية كاملة</p>
+      <div style="margin-top: 2rem;">
+        <a href="/articles.html" class="btn btn-lg btn-primary" style="background: white; color: var(--primary);">تصفح المقالات</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- أحدث المقالات - Latest Articles -->
+  <section class="section">
+    <div class="container">
+      <h2 class="section-title">أحدث المقالات</h2>
+      <div id="articlesGrid" class="grid grid-3">
+        <!-- سيتم تحميل المقالات هنا -->
+        <div class="text-center" style="grid-column: 1/-1;">
+          <div class="spinner" style="width: 50px; height: 50px; border: 4px solid var(--border); border-top-color: var(--primary); border-radius: 50%; margin: 2rem auto;"></div>
+          <p>جاري تحميل المقالات...</p>
+        </div>
+      </div>
+      <div style="text-align: center; margin-top: 2rem;">
+        <a href="/articles.html" class="btn btn-primary">عرض جميع المقالات</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- المميزات - Features -->
+  <section class="section" style="background: var(--bg-primary);">
+    <div class="container">
+      <h2 class="section-title">المميزات</h2>
+      <div class="grid grid-3">
+        <div class="card text-center">
+          <div style="font-size: 3rem; margin-bottom: 1rem;">🚀</div>
+          <h3 class="card-title">سريع وخفيف</h3>
+          <p class="card-body">تصميم محسّن للأداء العالي وسرعة التحميل</p>
+        </div>
+        <div class="card text-center">
+          <div style="font-size: 3rem; margin-bottom: 1rem;">📱</div>
+          <h3 class="card-title">متجاوب تماماً</h3>
+          <p class="card-body">يعمل بشكل مثالي على جميع الأجهزة والشاشات</p>
+        </div>
+        <div class="card text-center">
+          <div style="font-size: 3rem; margin-bottom: 1rem;">🎨</div>
+          <h3 class="card-title">تصميم عصري</h3>
+          <p class="card-body">واجهة عربية نظيفة وجذابة مع دعم الوضع الداكن</p>
+        </div>
+        <div class="card text-center">
+          <div style="font-size: 3rem; margin-bottom: 1rem;">🔒</div>
+          <h3 class="card-title">آمن</h3>
+          <p class="card-body">نظام مصادقة قوي باستخدام JWT</p>
+        </div>
+        <div class="card text-center">
+          <div style="font-size: 3rem; margin-bottom: 1rem;">🔍</div>
+          <h3 class="card-title">بحث متقدم</h3>
+          <p class="card-body">ابحث في المقالات بسهولة وسرعة</p>
+        </div>
+        <div class="card text-center">
+          <div style="font-size: 3rem; margin-bottom: 1rem;">⚙️</div>
+          <h3 class="card-title">لوحة تحكم</h3>
+          <p class="card-body">إدارة كاملة للمقالات والمحتوى</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- التذييل - Footer -->
+  <footer class="footer">
+    <div class="container">
+      <p>&copy; 2024 نظام إدارة المحتوى العربي - جميع الحقوق محفوظة</p>
+      <p style="margin-top: 0.5rem; font-size: 0.875rem;">
+        بني باستخدام Node.js + Express + SQLite
+      </p>
+    </div>
+  </footer>
+
+  <script src="/js/main.js"></script>
+  <script>
+    // تحميل أحدث المقالات
+    async function loadLatestArticles() {
+      try {
+        const data = await api.get('/articles?limit=6');
+        const grid = document.getElementById('articlesGrid');
+        grid.innerHTML = '';
+
+        if (data.articles.length === 0) {
+          grid.innerHTML = '<p class="text-center" style="grid-column: 1/-1;">لا توجد مقالات منشورة حالياً</p>';
+          return;
+        }
+
+        data.articles.forEach(article => {
+          grid.appendChild(createArticleCard(article));
+        });
+      } catch (error) {
+        console.error('خطأ في تحميل المقالات:', error);
+        document.getElementById('articlesGrid').innerHTML = 
+          '<p class="text-center alert alert-error" style="grid-column: 1/-1;">حدث خطأ في تحميل المقالات</p>';
+      }
+    }
+
+    // تحميل المقالات عند تحميل الصفحة
+    document.addEventListener('DOMContentLoaded', loadLatestArticles);
+  </script>
+</body>
+</html>
