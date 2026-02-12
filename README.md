@@ -109,12 +109,18 @@ arabic-cms/
 npm install
 ```
 
-#### 2. تهيئة قاعدة البيانات
+#### 2. إعداد متغيرات البيئة (اختياري لكن مُنصح به)
+```bash
+cp .env.example .env
+# عدّل ملف .env وأضف JWT_SECRET قوي
+```
+
+#### 3. تهيئة قاعدة البيانات
 ```bash
 npm run init-db
 ```
 
-#### 3. تشغيل الخادم
+#### 4. تشغيل الخادم
 ```bash
 npm start
 ```
@@ -197,7 +203,19 @@ http://localhost:3000
 ```
 
 ### تغيير JWT Secret
-عدّل ملف `/server/middleware/auth.js`:
+في بيئة الإنتاج، استخدم متغير بيئي:
+```bash
+# إنشاء ملف .env
+cp .env.example .env
+
+# توليد مفتاح عشوائي قوي
+node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"
+
+# أضف المفتاح في ملف .env
+JWT_SECRET=your-generated-secret-key
+```
+
+أو عدّل ملف `/server/middleware/auth.js` مباشرة (غير منصوح به):
 ```javascript
 const JWT_SECRET = 'your-secret-key-here';
 ```
@@ -255,6 +273,13 @@ server {
 - حماية المسارات الإدارية
 - التحقق من نوع الملفات المرفوعة
 - حد أقصى لحجم الصورة (5MB)
+
+### ملاحظات أمنية للإنتاج
+- **استخدم JWT_SECRET قوي**: قم بتعيين متغير بيئة JWT_SECRET بمفتاح عشوائي قوي
+- **Rate Limiting**: يُنصح بإضافة rate limiting للـ API endpoints باستخدام `express-rate-limit`
+- **HTTPS**: استخدم HTTPS في بيئة الإنتاج
+- **تحديث الحزم**: تأكد من تحديث الحزم بانتظام (`npm update`)
+- **قاعدة بيانات**: للمشاريع الكبيرة، استخدم PostgreSQL أو MySQL بدلاً من SQLite
 
 ## 📝 ملاحظات
 
