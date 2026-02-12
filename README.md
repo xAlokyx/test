@@ -276,6 +276,7 @@ server {
 
 ### ملاحظات أمنية للإنتاج
 - **استخدم JWT_SECRET قوي**: قم بتعيين متغير بيئة JWT_SECRET بمفتاح عشوائي قوي
+- **Multer 2.x**: تم استخدام multer@2.0.2 (خالٍ من ثغرات DoS)
 - **Rate Limiting**: يُنصح بإضافة rate limiting للـ API endpoints باستخدام `express-rate-limit`
 - **HTTPS**: استخدم HTTPS في بيئة الإنتاج
 - **تحديث الحزم**: تأكد من تحديث الحزم بانتظام (`npm update`)
